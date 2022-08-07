@@ -6,6 +6,8 @@
 #include <chrono>
 #include <unordered_map>
 #include <set>
+#include <map>
+
 
 std::vector<std::string> ReadFile(const char* filePath)
 {
@@ -126,15 +128,35 @@ void RemoveDoubles(std::vector<std::string> &words)
     }
 }
 
+std::unordered_map<char, std::vector<std::string>> AlphabetGroup(std::vector<std::string> words)
+{
+    std::unordered_map<char, std::vector<std::string>> groups;
+    //proity of letters:
+    //e,a,r,i,o,t,n,s,l,c,u,d,p,m,h,g,b,f,y,w,k,v,x,z,j,q - random study
+    char proity[26] = {'E','A','R','I','O','T','N','S','L','C',
+            'U','D','P','M','H','G','B','F','Y','W','K','V','X','Z','J','Q'};
+
+    for(auto word : words){
+        for(char letter : proity){
+            if (word.find(letter) != std::string::npos){
+                groups[letter].push_back(word);
+                break;
+            }
+        }
+    }
+
+
+    return groups;
+}
 
 int main()
 {
-    const char* filePath = "words/4letters.txt";
+    const char* filePath = "words/3letters.txt";
 
     auto currentTime = std::chrono::high_resolution_clock::now();
     std::vector<std::string> words = ReadFile(filePath);
     auto newTime = std::chrono::high_resolution_clock::now();
-    float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
+    long double frameTime = std::chrono::duration<long double, std::chrono::seconds::period>(newTime - currentTime).count();
     std::cout << "Time to read (seconds) : " << frameTime << std::endl;
     std::cout << "Number of words: " << words.size() << "\n" << std::endl;
 
@@ -142,7 +164,7 @@ int main()
     currentTime = std::chrono::high_resolution_clock::now();
     RemoveDoubles(words);
     newTime = std::chrono::high_resolution_clock::now();
-    frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
+    frameTime = std::chrono::duration<long double, std::chrono::seconds::period>(newTime - currentTime).count();
     std::cout << "Time to remove doubles (seconds) : " << frameTime << std::endl;
     std::cout << "Number of words (after doubles gone): " << words.size() << "\n" << std::endl;
 
@@ -150,9 +172,16 @@ int main()
     currentTime = std::chrono::high_resolution_clock::now();
     words = RemoveDups(words);
     newTime = std::chrono::high_resolution_clock::now();
-    frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
+    frameTime = std::chrono::duration<long double, std::chrono::seconds::period>(newTime - currentTime).count();
     std::cout << "Time to remove similar (seconds) : " << frameTime << std::endl;
     std::cout << "Number of words (^ + similar gone): " << words.size() << "\n" << std::endl;
+
+    currentTime = std::chrono::high_resolution_clock::now();
+    auto groups = AlphabetGroup(words);
+    newTime = std::chrono::high_resolution_clock::now();
+    frameTime = std::chrono::duration<long double, std::chrono::seconds::period>(newTime - currentTime).count();
+    std::cout << "Time to group : " << frameTime << std::endl;
+
 
     return 0;
 }
