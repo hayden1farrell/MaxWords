@@ -7,15 +7,15 @@
 #include <unordered_map>
 #include <set>
 
-std::vector<std::string> ReadFile()
+std::vector<std::string> ReadFile(const char* filePath)
 {
     std::fstream file;
-    file.open("words/4letters.txt", std::ios::in);
+    file.open(filePath, std::ios::in);
     if(!file.is_open()){
         std::cout << "Failed to open file " << std::endl;
     }
 
-    std::cout << "Opened file" << std::endl;
+    std::cout << "Opened file: " << filePath << std::endl;
     std::vector<std::string> words;
     std::string line;
     while(getline(file, line))
@@ -76,15 +76,6 @@ bool FindSimilar(std::string curWord, std::string word)
 
 std::vector<std::string> RemoveDups(std::vector<std::string> &words)
 {
-    for(int i = 0; i < words.size(); i++){
-        std::set<std::string> string_set;
-        for (char c: words[i])
-            string_set.insert(std::string{c});
-        if(words[i].size() != string_set.size())
-            words.erase(words.begin() + i);
-    }
-
-
     std::unordered_map<int, std::vector<std::string>> chars;
     for(auto word: words){
         int size = 0;
@@ -124,13 +115,44 @@ std::vector<std::string> RemoveDups(std::vector<std::string> &words)
     return temp;
 }
 
+void RemoveDoubles(std::vector<std::string> &words)
+{
+    for(int i = 0; i < words.size(); i++){
+        std::set<std::string> string_set;
+        for (char c: words[i])
+            string_set.insert(std::string{c});
+        if(words[i].size() != string_set.size())
+            words.erase(words.begin() + i);
+    }
+}
+
 
 int main()
 {
-    std::vector<std::string> words = ReadFile();
-    std::cout << "Number of words: " << words.size() << std::endl;
+    const char* filePath = "words/4letters.txt";
+
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    std::vector<std::string> words = ReadFile(filePath);
+    auto newTime = std::chrono::high_resolution_clock::now();
+    float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
+    std::cout << "Time to read (seconds) : " << frameTime << std::endl;
+    std::cout << "Number of words: " << words.size() << "\n" << std::endl;
+
+
+    currentTime = std::chrono::high_resolution_clock::now();
+    RemoveDoubles(words);
+    newTime = std::chrono::high_resolution_clock::now();
+    frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
+    std::cout << "Time to remove doubles (seconds) : " << frameTime << std::endl;
+    std::cout << "Number of words (after doubles gone): " << words.size() << "\n" << std::endl;
+
+
+    currentTime = std::chrono::high_resolution_clock::now();
     words = RemoveDups(words);
-    std::cout << "Number of words: " << words.size() << std::endl;
+    newTime = std::chrono::high_resolution_clock::now();
+    frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
+    std::cout << "Time to remove similar (seconds) : " << frameTime << std::endl;
+    std::cout << "Number of words (^ + similar gone): " << words.size() << "\n" << std::endl;
 
     return 0;
 }
