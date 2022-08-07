@@ -38,7 +38,18 @@ std::vector<std::string> ReadFile()
     return words;
 }
 
-std::vector<std::string> RemoveDups(std::vector<std::string> words)
+void DisplayMap(std::unordered_map<int, std::vector<std::string>> chars)
+{
+    for(auto temp:chars){
+        std::cout << temp.first << ": ";
+        for(auto word:temp.second){
+            std::cout << word << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
+void RemoveDups(std::vector<std::string> &words)
 {
     std::unordered_map<int, std::vector<std::string>> chars;
     for(auto word: words){
@@ -48,23 +59,17 @@ std::vector<std::string> RemoveDups(std::vector<std::string> words)
         }
         chars[size].push_back(word);
     }
+    DisplayMap(chars);
 
-    for(auto temp:chars){
-        std::cout << temp.first << ": ";
-        for(auto word:temp.second){
-            std::cout << word << " ";
-        }
-        std::cout << std::endl;
-    }
-
-    return words;
 }
+
 
 int main()
 {
     std::vector<std::string> words = ReadFile();
     std::cout << "Number of words: " << words.size() << std::endl;
-    words = RemoveDups(words);
+    RemoveDups(words);
+    std::cout << "Number of words: " << words.size() << std::endl;
 
     return 0;
 }
