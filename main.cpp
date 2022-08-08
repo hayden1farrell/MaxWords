@@ -128,9 +128,9 @@ void RemoveDoubles(std::vector<std::string> &words)
     }
 }
 
-std::unordered_map<char, std::vector<std::string>> AlphabetGroup(std::vector<std::string> words)
+std::map<char, std::vector<std::string>> AlphabetGroup(std::vector<std::string> words)
 {
-    std::unordered_map<char, std::vector<std::string>> groups;
+    std::map<char, std::vector<std::string>> groups;
     //proity of letters:
     //e,a,r,i,o,t,n,s,l,c,u,d,p,m,h,g,b,f,y,w,k,v,x,z,j,q - random study
     char proity[26] = {'E','A','R','I','O','T','N','S','L','C',
@@ -145,8 +145,24 @@ std::unordered_map<char, std::vector<std::string>> AlphabetGroup(std::vector<std
         }
     }
 
-
     return groups;
+}
+
+int Solve(std::map<char, std::vector<std::string>> groups, 
+        std::vector<std::string> curWords)
+{
+    int max = -1;
+    
+    for(auto group : groups){
+        std::cout << "Current main group: " << group.first << std::endl;
+        for(int i = 0; i < group.second.size(); i++) // loops through all the group
+        {
+            
+        }
+    }
+
+
+    return max;
 }
 
 int main()
@@ -181,7 +197,17 @@ int main()
     newTime = std::chrono::high_resolution_clock::now();
     frameTime = std::chrono::duration<long double, std::chrono::seconds::period>(newTime - currentTime).count();
     std::cout << "Time to group : " << frameTime << std::endl;
+   // for(auto group : groups){
+   //     std::cout << group.first << ": " << group.second.size() <<  std::endl;
+   // }
 
+    currentTime = std::chrono::high_resolution_clock::now();
+    std::vector<std::string> curWords{};
+    int maxfit = Solve(groups, curWords);
+    newTime = std::chrono::high_resolution_clock::now();
+    frameTime = std::chrono::duration<long double, std::chrono::seconds::period>(newTime - currentTime).count();
+    std::cout << "Time to solve : " << frameTime << std::endl;
+    std::cout << "Max fit: " << maxfit << std::endl;
 
     return 0;
 }
